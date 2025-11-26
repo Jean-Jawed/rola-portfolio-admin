@@ -1,0 +1,24 @@
+{
+  "name": "rola-portfolio",
+  "version": "1.0.0",
+  "description": "Portfolio website for Rola Khayyat - Photographer & Curator",
+  "main": "build.js",
+  "scripts": {
+    "build": "node build.js",
+    "dev": "node build.js && npm run serve",
+    "serve": "npx http-server dist -p 8080"
+  },
+  "keywords": [
+    "portfolio",
+    "photography",
+    "firebase"
+  ],
+  "author": "Jawed",
+  "license": "MIT",
+  "dependencies": {
+    "firebase": "^10.7.1"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}

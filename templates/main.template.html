@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{TITLE_FR}} - Portfolio</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="{{TITLE_FR}} - Photographer & Curator">
+    <meta property="og:description" content="Lebanese interdisciplinary artist and curator based in Brooklyn, NY">
+    <meta property="og:image" content="{{LANDING_IMAGE}}">
+    <meta property="og:type" content="website">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="main-page">
+    <button class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <nav class="sidebar" id="sidebar">
+        <div class="site-title" id="siteTitle">R KHAYYAT</div>
+        <div class="menu-section">
+            <div class="menu-item expandable" data-section="curatorial">
+                <span class="menu-title">Curatorial Projects</span>
+                <div class="submenu">
+                    {{CURATORIAL_PROJECTS}}
+                </div>
+            </div>
+            
+            <div class="menu-item expandable" data-section="personal">
+                <span class="menu-title">Personal Works</span>
+                <div class="submenu">
+                    {{PERSONAL_PROJECTS}}
+                </div>
+            </div>
+            
+            <div class="menu-item" data-page="about">About Rola</div>
+            <div class="menu-item" data-page="contact">Contact</div>
+            <div class="menu-item" data-page="insta" data-url="{{INSTAGRAM_URL}}">Instagram</div>
+        </div>
+        
+        <div class="footer">
+            © {{TITLE_FR}} 2025<br>
+            Website by <a href="https://javed.fr" target="_blank">Jawed</a>
+        </div>
+    </nav>
+    
+    <main class="content-area" id="contentArea">
+        <div class="placeholder">Select a project</div>
+        <div class="gallery" id="gallery"></div>
+        <div class="about-content" id="aboutContent">
+            {{ABOUT_TEXT}}
+        </div>
+        <div class="contact-content" id="contactContent">
+            {{CONTACT_TEXT}}
+        </div>
+    </main>
+    
+    <div class="lightbox" id="lightbox">
+        <span class="close-lightbox" id="closeLightbox">&times;</span>
+        <img src="" alt="" id="lightboxImage">
+        <div class="lightbox-nav">
+            <button class="nav-btn prev" id="prevBtn">&#8249;</button>
+            <button class="nav-btn next" id="nextBtn">&#8250;</button>
+        </div>
+    </div>
+    
+    <script src="main.js"></script>
+</body>
+</html>

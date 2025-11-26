@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Rola Portfolio</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <!-- Écran de connexion -->
+    <div id="loginScreen" class="screen">
+        <div class="login-container">
+            <h1>🔐 Admin Portal</h1>
+            <p class="subtitle">Rola Portfolio</p>
+            <form id="loginForm">
+                <input type="email" id="loginEmail" placeholder="Email" required>
+                <input type="password" id="loginPassword" placeholder="Mot de passe" required>
+                <button type="submit" class="btn-primary">Se connecter</button>
+            </form>
+            <div id="loginError" class="error-message"></div>
+        </div>
+    </div>
+
+    <!-- Dashboard principal -->
+    <div id="dashboardScreen" class="screen hidden">
+        <header class="admin-header">
+            <h1>📸 Admin - Rola Portfolio</h1>
+            <div class="header-actions">
+                <span id="userEmail" class="user-info"></span>
+                <button id="logoutBtn" class="btn-secondary">Déconnexion</button>
+            </div>
+        </header>
+
+        <div class="dashboard-container">
+            <!-- Section A : Paramètres du site -->
+            <section class="admin-section">
+                <h2>⚙️ Paramètres du site</h2>
+                
+                <!-- Landing Page -->
+                <div class="card">
+                    <h3>Landing Page</h3>
+                    <div class="form-group">
+                        <label>Image actuelle :</label>
+                        <div id="landingImagePreview" class="image-preview"></div>
+                        <input type="file" id="landingImageInput" accept="image/*" class="file-input">
+                        <label for="landingImageInput" class="btn-secondary">📁 Changer l'image</label>
+                        <div class="upload-progress" id="landingProgress"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Titre français :</label>
+                        <input type="text" id="titleFr" placeholder="Rola KHAYYAT">
+                    </div>
+                    <div class="form-group">
+                        <label>Titre arabe :</label>
+                        <input type="text" id="titleAr" placeholder="رولا خياط" dir="rtl">
+                    </div>
+                    <button id="saveLandingBtn" class="btn-primary">Sauvegarder</button>
+                </div>
+
+                <!-- About -->
+                <div class="card">
+                    <h3>Page About</h3>
+                    <div class="form-group">
+                        <label>Texte biographique :</label>
+                        <textarea id="aboutText" rows="10" placeholder="Rola Khayyat is a Lebanese interdisciplinary artist..."></textarea>
+                    </div>
+                    <button id="saveAboutBtn" class="btn-primary">Sauvegarder</button>
+                </div>
+
+                <!-- Contact -->
+                <div class="card">
+                    <h3>Page Contact</h3>
+                    <div class="form-group">
+                        <label>Texte de contact :</label>
+                        <textarea id="contactText" rows="5" placeholder="For inquiries, please reach out..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Lien Instagram :</label>
+                        <input type="url" id="instagramUrl" placeholder="https://instagram.com/...">
+                    </div>
+                    <button id="saveContactBtn" class="btn-primary">Sauvegarder</button>
+                </div>
+            </section>
+
+            <!-- Section B : Gestion des projets -->
+            <section class="admin-section">
+                <h2>🎨 Mes Projets</h2>
+                <button id="newProjectBtn" class="btn-primary">+ Nouveau projet</button>
+
+                <div class="projects-container">
+                    <h4>Curatorial Projects</h4>
+                    <div id="curatorialProjectsList" class="projects-list"></div>
+
+                    <h4>Personal Works</h4>
+                    <div id="personalProjectsList" class="projects-list"></div>
+                </div>
+            </section>
+
+            <!-- Section C : Publication -->
+            <section class="admin-section">
+                <h2>🚀 Publication</h2>
+                <div class="card publish-card">
+                    <div id="changesPreview" class="changes-preview">
+                        <p>Modifications en attente :</p>
+                        <ul id="changesList"></ul>
+                    </div>
+                    <p class="warning">⚠️ Le site sera mis à jour dans 2-3 minutes après publication</p>
+                    <button id="publishBtn" class="btn-publish">PUBLIER SUR LE SITE</button>
+                    <div id="publishStatus" class="publish-status"></div>
+                    <p id="lastPublish" class="last-publish">Dernière publication : -</p>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Modal : Créer/Modifier un projet -->
+    <div id="projectModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="modal-close" id="closeModal">&times;</span>
+            <h2 id="modalTitle">➕ Nouveau Projet</h2>
+            
+            <div class="form-group">
+                <label>Nom du projet :</label>
+                <input type="text" id="projectName" placeholder="Ex: Beyrouth 2024">
+            </div>
+
+            <div class="form-group">
+                <label>Description (optionnel) :</label>
+                <textarea id="projectDescription" rows="3" placeholder="Description du projet..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Catégorie :</label>
+                <div class="radio-group">
+                    <label>
+                        <input type="radio" name="category" value="curatorial" checked>
+                        Curatorial
+                    </label>
+                    <label>
+                        <input type="radio" name="category" value="personal">
+                        Personal
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Ordre d'affichage :</label>
+                <input type="number" id="projectOrder" value="1" min="1">
+            </div>
+
+            <div class="form-group">
+                <label>Photos du projet :</label>
+                <div id="projectImages" class="project-images"></div>
+                <input type="file" id="projectImageInput" accept="image/*" multiple class="file-input">
+                <label for="projectImageInput" class="btn-secondary">📁 Ajouter des photos</label>
+                <div class="upload-progress" id="projectProgress"></div>
+            </div>
+
+            <div class="modal-actions">
+                <button id="cancelProjectBtn" class="btn-secondary">Annuler</button>
+                <button id="saveProjectBtn" class="btn-primary">Sauvegarder</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Firebase et script admin -->
+    <script type="module" src="admin.js"></script>
+</body>
+</html>

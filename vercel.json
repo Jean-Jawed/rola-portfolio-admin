@@ -6,8 +6,24 @@
   "framework": null,
   "routes": [
     {
-      "src": "/admin/?$",
+      "src": "/admin$",
       "dest": "/admin/index.html"
+    },
+    {
+      "src": "/admin/$",
+      "dest": "/admin/index.html"
+    },
+    {
+      "src": "/admin/index.html$",
+      "dest": "/admin/index.html"
+    },
+    {
+      "src": "/admin/admin.css$",
+      "dest": "/admin/admin.css"
+    },
+    {
+      "src": "/admin/admin.js$",
+      "dest": "/admin/admin.js"
     },
     {
       "src": "/(.*)",

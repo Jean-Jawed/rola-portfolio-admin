@@ -183,6 +183,14 @@ async function build() {
         fs.copyFileSync('./public/landing.js', './dist/landing.js');
         log('   ✓ Fichiers statiques copiés', 'green');
         
+        // 9. Copier le dossier admin
+        log('\n👤 Copie de l\'interface admin...', 'yellow');
+        fs.mkdirSync('./dist/admin', { recursive: true });
+        fs.copyFileSync('./admin/index.html', './dist/admin/index.html');
+        fs.copyFileSync('./admin/admin.css', './dist/admin/admin.css');
+        fs.copyFileSync('./admin/admin.js', './dist/admin/admin.js');
+        log('   ✓ Interface admin copiée', 'green');
+        
         // Résumé
         log('\n✅ BUILD TERMINÉ AVEC SUCCÈS !', 'green');
         log(`\n📊 Résumé :`, 'blue');

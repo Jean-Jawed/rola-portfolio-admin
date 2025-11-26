@@ -36,6 +36,13 @@ function log(message, color = 'reset') {
     console.log(`${colors[color]}${message}${colors.reset}`);
 }
 
+// Fonction utilitaire pour nettoyer les noms de fichiers
+function cleanFilename(filename) {
+    if (!filename) return '';
+    // Enlever les guillemets doubles autour du nom
+    return filename.replace(/^"+|"+$/g, '').trim();
+}
+
 // Fonction pour télécharger une image
 async function downloadImage(url, filepath) {
     return new Promise((resolve, reject) => {
@@ -88,7 +95,9 @@ async function build() {
             const data = doc.data();
             const projectId = doc.id;
             
-            projectsData[projectId] = data.images || [];
+            // Nettoyer les noms d'images
+            const cleanImages = (data.images || []).map(img => cleanFilename(img));
+            projectsData[projectId] = cleanImages;
             
             if (data.category === 'curatorial') {
                 curatorialProjects.push({
@@ -134,7 +143,7 @@ async function build() {
         let indexTemplate = fs.readFileSync('./templates/index.template.html', 'utf8');
         
         indexTemplate = indexTemplate
-            .replace(/\{\{LANDING_IMAGE\}\}/g, settings.landing_image || 'images/default.jpg')
+            .replace(/\{\{LANDING_IMAGE\}\}/g, cleanFilename(settings.landing_image) || 'images/default.jpg')
             .replace(/\{\{TITLE_FR\}\}/g, settings.title_fr || 'Rola KHAYYAT')
             .replace(/\{\{TITLE_AR\}\}/g, settings.title_ar || 'رولا خياط');
         
@@ -159,7 +168,7 @@ async function build() {
             .replace('{{CURATORIAL_PROJECTS}}', curatorialHTML)
             .replace('{{PERSONAL_PROJECTS}}', personalHTML)
             .replace(/\{\{TITLE_FR\}\}/g, settings.title_fr || 'Rola KHAYYAT')
-            .replace(/\{\{LANDING_IMAGE\}\}/g, settings.landing_image || 'images/default.jpg')
+            .replace(/\{\{LANDING_IMAGE\}\}/g, cleanFilename(settings.landing_image) || 'images/default.jpg')
             .replace('{{ABOUT_TEXT}}', settings.about || 'About text not available.')
             .replace('{{CONTACT_TEXT}}', settings.contact || 'Contact information not available.')
             .replace(/\{\{INSTAGRAM_URL\}\}/g, settings.instagram_url || 'https://www.instagram.com/');
@@ -181,6 +190,12 @@ async function build() {
         log('\n📋 Copie des fichiers statiques...', 'yellow');
         fs.copyFileSync('./public/styles.css', './dist/styles.css');
         fs.copyFileSync('./public/landing.js', './dist/landing.js');
+        
+        // Copier le favicon s'il existe
+        if (fs.existsSync('./public/favicon.ico')) {
+            fs.copyFileSync('./public/favicon.ico', './dist/favicon.ico');
+        }
+        
         log('   ✓ Fichiers statiques copiés', 'green');
         
         // 9. Copier le dossier admin

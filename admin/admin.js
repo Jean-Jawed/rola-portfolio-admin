@@ -41,8 +41,8 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
-// Vercel Deploy Hook URL (à configurer après déploiement)
-const VERCEL_DEPLOY_HOOK = 'YOUR_VERCEL_DEPLOY_HOOK_URL';
+// Vercel Deploy Hook URL
+const VERCEL_DEPLOY_HOOK = 'https://api.vercel.com/v1/integrations/deploy/prj_RREZFbc8fBspKyXiTSlWJWGQMidF/sVYl9nBeug';
 
 // DOM Elements
 const loginScreen = document.getElementById('loginScreen');

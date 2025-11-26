@@ -143,7 +143,13 @@ async function loadSettings() {
             
             // Landing page
             if (settingsData.landing_image) {
-                landingImagePreview.style.backgroundImage = `url(${settingsData.landing_image})`;
+                try {
+                    // Récupérer l'URL Firebase Storage
+                    const imageUrl = await getDownloadURL(ref(storage, settingsData.landing_image));
+                    landingImagePreview.style.backgroundImage = `url(${imageUrl})`;
+                } catch (err) {
+                    console.error('Erreur chargement image landing:', err);
+                }
             }
             titleFr.value = settingsData.title_fr || '';
             titleAr.value = settingsData.title_ar || '';
@@ -367,13 +373,23 @@ projectImageInput.addEventListener('change', async (e) => {
     displayProjectImages();
 });
 
-function displayProjectImages() {
+async function displayProjectImages() {
     projectImages.innerHTML = '';
     
-    uploadedProjectImages.forEach((filename, index) => {
+    for (let index = 0; index < uploadedProjectImages.length; index++) {
+        const filename = uploadedProjectImages[index];
         const item = document.createElement('div');
         item.className = 'project-image-item';
-        item.style.backgroundImage = `url(images/${filename})`;
+        
+        try {
+            // Récupérer l'URL Firebase Storage
+            const imageUrl = await getDownloadURL(ref(storage, `images/${filename}`));
+            item.style.backgroundImage = `url(${imageUrl})`;
+        } catch (err) {
+            console.error('Erreur chargement image projet:', err);
+            item.style.backgroundImage = 'none';
+            item.style.backgroundColor = '#f0f0f0';
+        }
         
         const removeBtn = document.createElement('button');
         removeBtn.className = 'project-image-remove';
@@ -385,7 +401,7 @@ function displayProjectImages() {
         
         item.appendChild(removeBtn);
         projectImages.appendChild(item);
-    });
+    }
 }
 
 saveProjectBtn.addEventListener('click', async () => {

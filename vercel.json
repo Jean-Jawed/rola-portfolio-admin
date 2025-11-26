@@ -6,7 +6,7 @@
   "framework": null,
   "routes": [
     {
-      "src": "/admin/$",
+      "src": "/admin/?$",
       "dest": "/admin/index.html"
     },
     {

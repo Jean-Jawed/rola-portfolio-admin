@@ -41,8 +41,8 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
-// Vercel Deploy Hook URL
-const VERCEL_DEPLOY_HOOK = 'https://api.vercel.com/v1/integrations/deploy/prj_RREZFbc8fBspKyXiTSlWJWGQMidF/sVYl9nBeug';
+// Vercel Deploy Hook URL (à configurer après déploiement)
+const VERCEL_DEPLOY_HOOK = 'YOUR_VERCEL_DEPLOY_HOOK_URL';
 
 // DOM Elements
 const loginScreen = document.getElementById('loginScreen');
@@ -110,7 +110,7 @@ loginForm.addEventListener('submit', async (e) => {
         await signInWithEmailAndPassword(auth, email, password);
         loginError.textContent = '';
     } catch (error) {
-        loginError.textContent = 'Identifiants incorrects';
+        loginError.textContent = 'Incorrect credentials';
     }
 });
 
@@ -129,6 +129,13 @@ function showDashboard() {
     loadAllData();
 }
 
+// Fonction utilitaire pour nettoyer les noms de fichiers
+function cleanFilename(filename) {
+    if (!filename) return '';
+    // Enlever les guillemets doubles autour du nom
+    return filename.replace(/^"+|"+$/g, '').trim();
+}
+
 // ==================== LOAD DATA ====================
 async function loadAllData() {
     await loadSettings();
@@ -144,8 +151,9 @@ async function loadSettings() {
             // Landing page
             if (settingsData.landing_image) {
                 try {
-                    // Récupérer l'URL Firebase Storage
-                    const imageUrl = await getDownloadURL(ref(storage, settingsData.landing_image));
+                    // Nettoyer le nom de fichier et récupérer l'URL Firebase Storage
+                    const cleanPath = cleanFilename(settingsData.landing_image);
+                    const imageUrl = await getDownloadURL(ref(storage, cleanPath));
                     landingImagePreview.style.backgroundImage = `url(${imageUrl})`;
                 } catch (err) {
                     console.error('Erreur chargement image landing:', err);
@@ -162,7 +170,7 @@ async function loadSettings() {
             instagramUrl.value = settingsData.instagram_url || '';
         }
     } catch (error) {
-        showToast('Erreur de chargement des paramètres', 'error');
+        showToast('Error loading settings', 'error');
     }
 }
 
@@ -195,7 +203,7 @@ async function loadProjects() {
         displayProjects(personalProjects, personalProjectsList);
         
     } catch (error) {
-        showToast('Erreur de chargement des projets', 'error');
+        showToast('Error loading projects', 'error');
     }
 }
 
@@ -244,10 +252,10 @@ document.getElementById('saveLandingBtn').addEventListener('click', async () => 
         }
         
         await setDoc(doc(db, 'settings', 'site'), updates, { merge: true });
-        showToast('Landing page sauvegardée ✓', 'success');
+        showToast('Landing page saved ✓', 'success');
         await loadSettings();
     } catch (error) {
-        showToast('Erreur de sauvegarde', 'error');
+        showToast('Save error', 'error');
     }
 });
 
@@ -256,9 +264,9 @@ document.getElementById('saveAboutBtn').addEventListener('click', async () => {
         await setDoc(doc(db, 'settings', 'site'), {
             about: aboutText.value
         }, { merge: true });
-        showToast('About sauvegardé ✓', 'success');
+        showToast('About saved ✓', 'success');
     } catch (error) {
-        showToast('Erreur de sauvegarde', 'error');
+        showToast('Save error', 'error');
     }
 });
 
@@ -268,9 +276,9 @@ document.getElementById('saveContactBtn').addEventListener('click', async () => 
             contact: contactText.value,
             instagram_url: instagramUrl.value
         }, { merge: true });
-        showToast('Contact sauvegardé ✓', 'success');
+        showToast('Contact saved ✓', 'success');
     } catch (error) {
-        showToast('Erreur de sauvegarde', 'error');
+        showToast('Save error', 'error');
     }
 });
 
@@ -307,7 +315,7 @@ landingImageInput.addEventListener('change', (e) => {
 newProjectBtn.addEventListener('click', () => {
     currentEditingProject = null;
     uploadedProjectImages = [];
-    modalTitle.textContent = '➕ Nouveau Projet';
+    modalTitle.textContent = '➕ New Project';
     projectName.value = '';
     projectDescription.value = '';
     document.querySelector('input[name="category"][value="curatorial"]').checked = true;
@@ -334,7 +342,7 @@ window.editProject = async (projectId) => {
         currentEditingProject = projectId;
         uploadedProjectImages = project.images || [];
         
-        modalTitle.textContent = '✏️ Modifier le Projet';
+        modalTitle.textContent = '✏️ Edit Project';
         projectName.value = project.name;
         projectDescription.value = project.description || '';
         document.querySelector(`input[name="category"][value="${project.category}"]`).checked = true;
@@ -343,21 +351,21 @@ window.editProject = async (projectId) => {
         displayProjectImages();
         projectModal.classList.remove('hidden');
     } catch (error) {
-        showToast('Erreur de chargement du projet', 'error');
+        showToast('Error loading project', 'error');
     }
 };
 
 window.deleteProject = async (projectId, projectName) => {
-    if (!confirm(`Supprimer le projet "${projectName}" ?\nCette action est irréversible.`)) {
+    if (!confirm(`Delete project "${projectName}"?\nThis action is irreversible.`)) {
         return;
     }
     
     try {
         await deleteDoc(doc(db, 'projects', projectId));
-        showToast('Projet supprimé ✓', 'success');
+        showToast('Project deleted ✓', 'success');
         await loadProjects();
     } catch (error) {
-        showToast('Erreur de suppression', 'error');
+        showToast('Delete error', 'error');
     }
 };
 
@@ -382,8 +390,9 @@ async function displayProjectImages() {
         item.className = 'project-image-item';
         
         try {
-            // Récupérer l'URL Firebase Storage
-            const imageUrl = await getDownloadURL(ref(storage, `images/${filename}`));
+            // Nettoyer le nom et récupérer l'URL Firebase Storage
+            const cleanName = cleanFilename(filename);
+            const imageUrl = await getDownloadURL(ref(storage, `images/${cleanName}`));
             item.style.backgroundImage = `url(${imageUrl})`;
         } catch (err) {
             console.error('Erreur chargement image projet:', err);
@@ -407,7 +416,7 @@ async function displayProjectImages() {
 saveProjectBtn.addEventListener('click', async () => {
     const name = projectName.value.trim();
     if (!name) {
-        showToast('Le nom du projet est requis', 'error');
+        showToast('Project name is required', 'error');
         return;
     }
     
@@ -424,27 +433,27 @@ saveProjectBtn.addEventListener('click', async () => {
     try {
         if (currentEditingProject) {
             await updateDoc(doc(db, 'projects', currentEditingProject), projectData);
-            showToast('Projet mis à jour ✓', 'success');
+            showToast('Project updated ✓', 'success');
         } else {
             await addDoc(collection(db, 'projects'), projectData);
-            showToast('Projet créé ✓', 'success');
+            showToast('Project created ✓', 'success');
         }
         
         projectModal.classList.add('hidden');
         await loadProjects();
     } catch (error) {
-        showToast('Erreur de sauvegarde du projet', 'error');
+        showToast('Error saving project', 'error');
     }
 });
 
 // ==================== PUBLISH ====================
 publishBtn.addEventListener('click', async () => {
-    if (!confirm('Publier les modifications sur le site ?\nLe site sera mis à jour dans 2-3 minutes.')) {
+    if (!confirm('Publish changes to website?\nThe site will be updated in 2-3 minutes.')) {
         return;
     }
     
     publishStatus.className = 'publish-status loading';
-    publishStatus.textContent = '⏳ Publication en cours...';
+    publishStatus.textContent = '⏳ Publishing...';
     publishBtn.disabled = true;
     
     try {
@@ -453,10 +462,10 @@ publishBtn.addEventListener('click', async () => {
             await fetch(VERCEL_DEPLOY_HOOK, { method: 'POST' });
             
             publishStatus.className = 'publish-status success';
-            publishStatus.textContent = '✓ Publication démarrée ! Le site sera mis à jour dans 2-3 minutes.';
+            publishStatus.textContent = '✓ Publication started! The site will be updated in 2-3 minutes.';
             
-            const now = new Date().toLocaleString('fr-FR');
-            lastPublish.textContent = `Dernière publication : ${now}`;
+            const now = new Date().toLocaleString('en-US');
+            lastPublish.textContent = `Last publication: ${now}`;
             
             // Save last publish date
             await setDoc(doc(db, 'settings', 'site'), {
@@ -464,11 +473,11 @@ publishBtn.addEventListener('click', async () => {
             }, { merge: true });
         } else {
             publishStatus.className = 'publish-status error';
-            publishStatus.textContent = '⚠️ Deploy Hook non configuré. Voir README.md';
+            publishStatus.textContent = '⚠️ Deploy Hook not configured. See README.md';
         }
     } catch (error) {
         publishStatus.className = 'publish-status error';
-        publishStatus.textContent = '❌ Erreur de publication. Réessayez.';
+        publishStatus.textContent = '❌ Publication error. Try again.';
     }
     
     publishBtn.disabled = false;
